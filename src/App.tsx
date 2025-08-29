@@ -1,9 +1,10 @@
-import React from 'react'
 
 const App = () => {
   return (
     <div>
-      <h1>Hello</h1>
+      <div className="flex items-center justify-center h-screen text-xl font-semibold">
+      Weecom Dashboard
+    </div>
     </div>
   )
 }
