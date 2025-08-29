@@ -7,19 +7,40 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
 
 const ProductsList: React.FC = () => {
   const { data, isLoading, isError, error } = useProducts();
 
   if (isLoading) {
-    return <p className="text-center text-gray-500 mt-10">Loading products...</p>;
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+        {[...Array(8)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader>
+              <Skeleton className="h-40 w-full rounded-md" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-5 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   }
 
   if (isError) {
     return (
-      <p className="text-center text-red-500 mt-10">
-        Failed to load products: {(error as Error).message}
-      </p>
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertTitle>Failed to load products</AlertTitle>
+          <AlertDescription>{(error as Error).message}</AlertDescription>
+        </Alert>
+      </div>
     );
   }
 
@@ -28,22 +49,26 @@ const ProductsList: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">Products</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {data?.products?.map((product: any) => (
-          <Card key={product.id} className="hover:shadow-lg transition">
-            <CardHeader>
-              <img
-                src={product.thumbnail}
-                alt={product.title}
-                className="h-40 w-full object-cover rounded-md"
-              />
-            </CardHeader>
-            <CardContent>
-              <CardTitle>{product.title}</CardTitle>
-              <CardDescription className="line-clamp-2">
-                {product.description}
-              </CardDescription>
-              <p className="text-green-600 font-bold mt-2">${product.price}</p>
-            </CardContent>
-          </Card>
+          <Link key={product.id} to={`/products/${product.id}`}>
+            <Card key={product.id} className="hover:shadow-lg transition">
+              <CardHeader>
+                <img
+                  src={product.thumbnail}
+                  alt={product.title}
+                  className="h-40 w-full object-cover rounded-md"
+                />
+              </CardHeader>
+              <CardContent>
+                <CardTitle>{product.title}</CardTitle>
+                <CardDescription className="line-clamp-2">
+                  {product.description}
+                </CardDescription>
+                <p className="text-green-600 font-bold mt-2">
+                  ${product.price}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
