@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProducts, fetchProductById } from "../api/products";
 
 // fetch all products
-export const useProcucts = () => {
+export const useProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: fetchProducts,
