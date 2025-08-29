@@ -7,8 +7,8 @@ const apiClient = axios.create({
   },
 });
 
-export const fetchProducts = async () => {
-  const response = await apiClient.get("/products");
+export const fetchProducts = async (limit=10,skip=0,search="") => {
+  const response = await apiClient.get(`/products?limit=${limit}&skip=${skip}&q=${search}`);
   return response.data;
 };
 

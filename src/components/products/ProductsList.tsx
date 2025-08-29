@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useState } from "react";
 import { useProducts } from "../../hooks/useProducts";
 import {
   Card,
@@ -11,9 +11,21 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const ProductsList: React.FC = () => {
-  const { data, isLoading, isError, error } = useProducts();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const { data, isLoading, isError, error } = useProducts(page, 10, search);
+
+  <Input
+    type="text"
+    placeholder="Search products"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="border p-2 rounded w-full mb-4"
+  />;
 
   if (isLoading) {
     return (
@@ -48,6 +60,17 @@ const ProductsList: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Products</h1>
+      {/* Search */}
+      <Input
+        type="text"
+        placeholder="Search products"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setPage(1); // reset page when search changes
+        }}
+        className="border p-2 rounded w-full mb-6"
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
         {data?.products?.map((product: any) => (
           <Card
@@ -75,6 +98,19 @@ const ProductsList: React.FC = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-6">
+        <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+          Previous
+        </Button>
+        <span>Page {page}</span>
+        <Button
+          disabled={(data?.total ?? 0) <= page * 10}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
