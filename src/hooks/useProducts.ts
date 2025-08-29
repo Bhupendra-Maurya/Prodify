@@ -11,7 +11,7 @@ export const useProducts = () => {
 
 // fetch single product
 
-export const useProduct=(id:number)=>{
+export const useProductById=(id:number)=>{
     return useQuery({
         queryKey:["product",id],
         queryFn:()=>fetchProductById(id),

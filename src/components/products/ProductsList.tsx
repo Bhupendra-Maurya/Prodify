@@ -10,6 +10,7 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const ProductsList: React.FC = () => {
   const { data, isLoading, isError, error } = useProducts();
@@ -47,28 +48,32 @@ const ProductsList: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Products</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
         {data?.products?.map((product: any) => (
-          <Link key={product.id} to={`/products/${product.id}`}>
-            <Card key={product.id} className="hover:shadow-lg transition">
-              <CardHeader>
-                <img
-                  src={product.thumbnail}
-                  alt={product.title}
-                  className="h-40 w-full object-cover rounded-md"
-                />
-              </CardHeader>
-              <CardContent>
-                <CardTitle>{product.title}</CardTitle>
-                <CardDescription className="line-clamp-2">
-                  {product.description}
-                </CardDescription>
-                <p className="text-green-600 font-bold mt-2">
-                  ${product.price}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <Card
+            key={product.id}
+            className="hover:shadow-lg transition  cursor-pointer"
+          >
+            <CardHeader>
+              <img
+                src={product.thumbnail}
+                alt={product.title}
+                className="h-40 w-full object-cover rounded-md"
+              />
+            </CardHeader>
+            <CardContent>
+              <CardTitle>{product.title}</CardTitle>
+              <CardDescription className="line-clamp-2">
+                {product.description}
+              </CardDescription>
+              <p className="text-green-600 font-bold mt-2">${product.price}</p>
+              <Link to={`/products/${product.id}`}>
+                <Button className="w-full bg-gray-600 text-white  cursor-pointer">
+                  View Details
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
