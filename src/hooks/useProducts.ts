@@ -21,9 +21,25 @@ export const useProductById = (id: number) => {
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+    mutationFn: (productData: CreateProductData) => {
+      // Generate a temporary ID for the new product
+      const newProduct = {
+        id: Date.now(), // Simple ID generation
+        ...productData,
+        thumbnail: "https://via.placeholder.com/150", // Default image
+      };
+      
+      // Add to cache at the beginning of the list
+      queryClient.setQueriesData({ queryKey: ["products"] }, (old: any) => {
+        if (!old?.products) return old;
+        return {
+          ...old,
+          products: [newProduct, ...old.products],
+          total: old.total + 1
+        };
+      });
+      
+      return Promise.resolve(newProduct);
     },
   });
 };

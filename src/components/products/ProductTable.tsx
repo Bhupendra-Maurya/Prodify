@@ -3,12 +3,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useProducts } from "@/hooks/useProducts";
 import ProductDialog from "./ProductDialog";
 import ProductViewDialog from "./ProductViewDialog";
 import DeleteProductDialog from "./DeleteProductDialog";
+import { toast } from "sonner";
 import type { Product } from "@/types/product";
+import { Alert, AlertDescription } from "../ui/alert";
 
 const ProductsTable: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -25,6 +26,22 @@ const ProductsTable: React.FC = () => {
   }, [search]);
   
   const { data, isLoading, isError, error } = useProducts(page, limit, debouncedSearch);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(`Failed to load products: ${(error as Error).message}`);
+    }
+  }, [isError, error]);
+
+  //   if (isError) {
+  //   return (
+  //     <Alert variant="destructive">
+  //       <AlertDescription>
+  //         Failed to load products: {(error as Error).message}
+  //       </AlertDescription>
+  //     </Alert>
+  //   );
+  // }
 
   if (isLoading) {
     return (
@@ -75,15 +92,7 @@ const ProductsTable: React.FC = () => {
     );
   }
 
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          Failed to load products: {(error as Error).message}
-        </AlertDescription>
-      </Alert>
-    );
-  }
+
 
   return (
     <div className="space-y-4">
