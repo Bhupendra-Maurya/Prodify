@@ -8,11 +8,26 @@ const apiClient = axios.create({
   },
 });
 
-export const fetchProducts = async (limit = 10, skip = 0, search = ""): Promise<ProductsResponse> => {
+export const fetchProducts = async (
+  limit = 10,
+  skip = 0,
+  search = "",
+  category = "all"
+): Promise<ProductsResponse> => {
   if (search) {
-    const response = await apiClient.get(`/products/search?q=${search}&limit=${limit}&skip=${skip}`);
+    const response = await apiClient.get(
+      `/products/search?q=${search}&limit=${limit}&skip=${skip}`
+    );
     return response.data;
   }
+
+   if (category && category !== "all") {
+    const response = await apiClient.get(
+      `/products/category/${category}?limit=${limit}&skip=${skip}`
+    );
+    return response.data;
+  }
+  
   const response = await apiClient.get(`/products?limit=${limit}&skip=${skip}`);
   return response.data;
 };
@@ -27,7 +42,10 @@ export const createProduct = async (productData: CreateProductData) => {
   return response.data;
 };
 
-export const updateProduct = async (id: number, productData: Partial<CreateProductData>) => {
+export const updateProduct = async (
+  id: number,
+  productData: Partial<CreateProductData>
+) => {
   const response = await apiClient.put(`/products/${id}`, productData);
   return response.data;
 };
@@ -36,4 +54,3 @@ export const deleteProduct = async (id: number) => {
   const response = await apiClient.delete(`/products/${id}`);
   return response.data;
 };
-

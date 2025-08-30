@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchProducts, fetchProductById, createProduct } from "../api/products";
+import { fetchProducts, fetchProductById } from "../api/products";
 import type { CreateProductData } from "@/types/product";
 
-export const useProducts = (page = 1, limit = 10, search = "") => {
+export const useProducts = (page = 1, limit = 10, search = "", category = "all") => {
   return useQuery({
-    queryKey: ["products", page, limit, search],
-    queryFn: () => fetchProducts(limit, (page - 1) * limit, search),
+    queryKey: ["products", page, limit, search,category],
+    queryFn: () => fetchProducts(limit, (page - 1) * limit, search,category),
     placeholderData: (previousData) => previousData,
   });
 };

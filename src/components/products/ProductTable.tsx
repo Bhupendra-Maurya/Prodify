@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,12 +16,19 @@ import ProductViewDialog from "./ProductViewDialog";
 import DeleteProductDialog from "./DeleteProductDialog";
 import { toast } from "sonner";
 import type { Product } from "@/types/product";
-import { Alert, AlertDescription } from "../ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ProductsTable: React.FC = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [category, setCategory] = useState("all");
   const limit = 10;
 
   useEffect(() => {
@@ -24,8 +38,13 @@ const ProductsTable: React.FC = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [search]);
-  
-  const { data, isLoading, isError, error } = useProducts(page, limit, debouncedSearch);
+
+  const { data, isLoading, isError, error } = useProducts(
+    page,
+    limit,
+    debouncedSearch,
+    category
+  );
 
   useEffect(() => {
     if (isError) {
@@ -65,10 +84,18 @@ const ProductsTable: React.FC = () => {
             <TableBody>
               {[...Array(5)].map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
                       <Skeleton className="h-8 w-12" />
@@ -92,15 +119,38 @@ const ProductsTable: React.FC = () => {
     );
   }
 
-
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Products</h1>
-        <ProductDialog trigger={<Button>Add Product</Button>} />
+        <div className="flex space-x-2">
+          {/* Category Filter */}
+          <Select
+            value={category}
+            onValueChange={(value) => {
+              setCategory(value);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="smartphones">Smartphones</SelectItem>
+              <SelectItem value="laptops">Laptops</SelectItem>
+              <SelectItem value="fragrances">Fragrances</SelectItem>
+              <SelectItem value="skincare">Skincare</SelectItem>
+              {/* You can dynamically fetch categories if needed */}
+            </SelectContent>
+          </Select>
+
+          {/* Add Product Button */}
+          <ProductDialog trigger={<Button>Add Product</Button>} />
+        </div>
+        {/* <ProductDialog trigger={<Button>Add Product</Button>} /> */}
       </div>
-      
+
       <Input
         placeholder="Search products..."
         value={search}
@@ -126,18 +176,19 @@ const ProductsTable: React.FC = () => {
                   <div className="flex flex-col items-center space-y-2">
                     <div className="text-gray-400 text-4xl">📦</div>
                     <h3 className="text-lg font-medium text-gray-900">
-                      {debouncedSearch ? "No search results" : "No products found"}
+                      {debouncedSearch
+                        ? "No search results"
+                        : "No products found"}
                     </h3>
                     <p className="text-gray-500">
-                      {debouncedSearch 
+                      {debouncedSearch
                         ? `No products match "${debouncedSearch}". Try a different search term.`
-                        : "Get started by adding your first product."
-                      }
+                        : "Get started by adding your first product."}
                     </p>
                     {debouncedSearch && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setSearch("")}
                         className="mt-2"
                       >
@@ -158,16 +209,28 @@ const ProductsTable: React.FC = () => {
                     <div className="flex space-x-2">
                       <ProductViewDialog
                         product={product}
-                        trigger={<Button variant="outline" size="sm">View</Button>}
+                        trigger={
+                          <Button variant="outline" size="sm">
+                            View
+                          </Button>
+                        }
                       />
                       <ProductDialog
                         product={product}
-                        trigger={<Button variant="outline" size="sm">Edit</Button>}
+                        trigger={
+                          <Button variant="outline" size="sm">
+                            Edit
+                          </Button>
+                        }
                       />
                       <DeleteProductDialog
                         productId={product.id}
                         productName={product.title}
-                        trigger={<Button variant="destructive" size="sm">Delete</Button>}
+                        trigger={
+                          <Button variant="destructive" size="sm">
+                            Delete
+                          </Button>
+                        }
                       />
                     </div>
                   </TableCell>
