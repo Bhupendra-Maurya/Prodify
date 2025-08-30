@@ -141,14 +141,11 @@ const ProductsTable: React.FC = () => {
               <SelectItem value="laptops">Laptops</SelectItem>
               <SelectItem value="fragrances">Fragrances</SelectItem>
               <SelectItem value="skincare">Skincare</SelectItem>
-              {/* You can dynamically fetch categories if needed */}
             </SelectContent>
           </Select>
 
-          {/* Add Product Button */}
           <ProductDialog trigger={<Button>Add Product</Button>} />
         </div>
-        {/* <ProductDialog trigger={<Button>Add Product</Button>} /> */}
       </div>
 
       <Input

@@ -24,9 +24,9 @@ export const useCreateProduct = () => {
     mutationFn: (productData: CreateProductData) => {
       // Generate a temporary ID for the new product
       const newProduct = {
-        id: Date.now(), // Simple ID generation
+        id: Date.now(), 
         ...productData,
-        thumbnail: "https://via.placeholder.com/150", // Default image
+        thumbnail: "https://placehold.co/600x400", 
       };
       
       // Add to cache at the beginning of the list
