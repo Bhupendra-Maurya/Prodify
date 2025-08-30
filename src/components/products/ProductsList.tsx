@@ -90,6 +90,7 @@ const ProductsList: React.FC = () => {
                 {product.description}
               </CardDescription>
               <p className="text-green-600 font-bold mt-2">${product.price}</p>
+              <p className="text-green-600 font-bold mt-2">Stock: {product.stock}</p>
               <Link to={`/products/${product.id}`}>
                 <Button className="w-full bg-gray-600 text-white  cursor-pointer">
                   View Details
