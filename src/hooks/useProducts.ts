@@ -31,9 +31,18 @@ export const useCreateProduct = () => {
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<CreateProductData> }) => updateProduct(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+    mutationFn: ({ id, data }: { id: number; data: Partial<CreateProductData> }) => {
+      // Only update the cache, no API call
+      queryClient.setQueriesData({ queryKey: ["products"] }, (old: any) => {
+        if (!old?.products) return old;
+        return {
+          ...old,
+          products: old.products.map((product: any) => 
+            product.id === id ? { ...product, ...data } : product
+          )
+        };
+      });
+      return Promise.resolve({ id, ...data });
     },
   });
 };
