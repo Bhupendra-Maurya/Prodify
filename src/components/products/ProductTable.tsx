@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useProducts, useDeleteProduct } from "@/hooks/useProducts";
+import { useProducts } from "@/hooks/useProducts";
 import ProductDialog from "./ProductDialog";
+import ProductViewDialog from "./ProductViewDialog";
+import DeleteProductDialog from "./DeleteProductDialog";
 import type { Product } from "@/types/product";
 
 const ProductsTable: React.FC = () => {
@@ -23,20 +25,6 @@ const ProductsTable: React.FC = () => {
   }, [search]);
   
   const { data, isLoading, isError, error } = useProducts(page, limit, debouncedSearch);
-  const deleteMutation = useDeleteProduct();
-
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this product?")) {
-      deleteMutation.mutate(id, {
-        onSuccess: () => {
-          alert("Product deleted successfully!");
-        },
-        onError: (error) => {
-          alert(`Failed to delete product: ${error.message}`);
-        },
-      });
-    }
-  };
 
   if (isLoading) {
     return (
@@ -45,11 +33,43 @@ const ProductsTable: React.FC = () => {
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-10 w-32" />
         </div>
-        <Skeleton className="h-10 w-full" />
-        <div className="space-y-2">
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
+        <Skeleton className="h-10 w-80" />
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Stock</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Skeleton className="h-8 w-12" />
+                      <Skeleton className="h-8 w-12" />
+                      <Skeleton className="h-8 w-16" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-4 w-40" />
+          <div className="flex space-x-2">
+            <Skeleton className="h-9 w-20" />
+            <Skeleton className="h-9 w-16" />
+          </div>
         </div>
       </div>
     );
@@ -93,8 +113,29 @@ const ProductsTable: React.FC = () => {
           <TableBody>
             {data?.products?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                  No products found
+                <TableCell colSpan={5} className="text-center py-12">
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className="text-gray-400 text-4xl">📦</div>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {debouncedSearch ? "No search results" : "No products found"}
+                    </h3>
+                    <p className="text-gray-500">
+                      {debouncedSearch 
+                        ? `No products match "${debouncedSearch}". Try a different search term.`
+                        : "Get started by adding your first product."
+                      }
+                    </p>
+                    {debouncedSearch && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setSearch("")}
+                        className="mt-2"
+                      >
+                        Clear search
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
@@ -106,18 +147,19 @@ const ProductsTable: React.FC = () => {
                   <TableCell>{product.stock}</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
+                      <ProductViewDialog
+                        product={product}
+                        trigger={<Button variant="outline" size="sm">View</Button>}
+                      />
                       <ProductDialog
                         product={product}
                         trigger={<Button variant="outline" size="sm">Edit</Button>}
                       />
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(product.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        Delete
-                      </Button>
+                      <DeleteProductDialog
+                        productId={product.id}
+                        productName={product.title}
+                        trigger={<Button variant="destructive" size="sm">Delete</Button>}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>

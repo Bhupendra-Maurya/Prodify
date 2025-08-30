@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCreateProduct, useUpdateProduct } from "@/hooks/useProducts";
+import { toast } from "sonner";
 import type { Product } from "@/types/product";
 
 interface ProductDialogProps {
@@ -41,10 +42,10 @@ const ProductDialog: React.FC<ProductDialogProps> = ({ product, trigger }) => {
       updateMutation.mutate({ id: product.id, data: formData }, {
         onSuccess: () => {
           setOpen(false);
-          alert("Product updated successfully!");
+          toast.success("Product updated successfully!");
         },
         onError: (error) => {
-          alert(`Failed to update product: ${error.message}`);
+          toast.error(`Failed to update product: ${error.message}`);
         },
       });
     } else {
@@ -52,10 +53,10 @@ const ProductDialog: React.FC<ProductDialogProps> = ({ product, trigger }) => {
         onSuccess: () => {
           setOpen(false);
           setFormData({ title: "", price: 0, category: "", stock: 0, description: "" });
-          alert("Product created successfully!");
+          toast.success("Product created successfully!");
         },
         onError: (error) => {
-          alert(`Failed to create product: ${error.message}`);
+          toast.error(`Failed to create product: ${error.message}`);
         },
       });
     }

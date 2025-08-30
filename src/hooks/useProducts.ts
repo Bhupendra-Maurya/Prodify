@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchProducts, fetchProductById, createProduct, updateProduct, deleteProduct } from "../api/products";
+import { fetchProducts, fetchProductById, createProduct } from "../api/products";
 import type { CreateProductData } from "@/types/product";
 
 export const useProducts = (page = 1, limit = 10, search = "") => {
@@ -50,9 +50,17 @@ export const useUpdateProduct = () => {
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+    mutationFn: (id: number) => {
+      // Only update the cache, no API call
+      queryClient.setQueriesData({ queryKey: ["products"] }, (old: any) => {
+        if (!old?.products) return old;
+        return {
+          ...old,
+          products: old.products.filter((product: any) => product.id !== id),
+          total: old.total - 1
+        };
+      });
+      return Promise.resolve({ id });
     },
   });
 };
