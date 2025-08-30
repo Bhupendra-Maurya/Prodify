@@ -121,10 +121,9 @@ const ProductsTable: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Products</h1>
-        <div className="flex space-x-2">
-          {/* Category Filter */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 className="text-xl md:text-2xl font-bold">Products</h1>
+        <div className="flex flex-col sm:flex-row gap-2">
           <Select
             value={category}
             onValueChange={(value) => {
@@ -132,7 +131,7 @@ const ProductsTable: React.FC = () => {
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
             <SelectContent>
@@ -144,7 +143,7 @@ const ProductsTable: React.FC = () => {
             </SelectContent>
           </Select>
 
-          <ProductDialog trigger={<Button>Add Product</Button>} />
+          <ProductDialog trigger={<Button className="w-full sm:w-auto">Add Product</Button>} />
         </div>
       </div>
 
@@ -152,11 +151,11 @@ const ProductsTable: React.FC = () => {
         placeholder="Search products..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="max-w-sm"
+        className="w-full sm:max-w-sm"
       />
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="min-w-full">
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
@@ -203,11 +202,11 @@ const ProductsTable: React.FC = () => {
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.stock}</TableCell>
                   <TableCell>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
                       <ProductViewDialog
                         product={product}
                         trigger={
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" className="w-full sm:w-auto">
                             View
                           </Button>
                         }
@@ -215,7 +214,7 @@ const ProductsTable: React.FC = () => {
                       <ProductDialog
                         product={product}
                         trigger={
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" className="w-full sm:w-auto">
                             Edit
                           </Button>
                         }
@@ -224,7 +223,7 @@ const ProductsTable: React.FC = () => {
                         productId={product.id}
                         productName={product.title}
                         trigger={
-                          <Button variant="destructive" size="sm">
+                          <Button variant="destructive" size="sm" className="w-full sm:w-auto">
                             Delete
                           </Button>
                         }
@@ -238,15 +237,16 @@ const ProductsTable: React.FC = () => {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-500">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="text-sm text-gray-500 text-center sm:text-left">
           Showing {data?.products?.length || 0} of {data?.total || 0} products
         </div>
-        <div className="flex space-x-2">
+        <div className="flex justify-center sm:justify-end space-x-2">
           <Button
             variant="outline"
             onClick={() => setPage(page - 1)}
             disabled={page === 1}
+            className="flex-1 sm:flex-none"
           >
             Previous
           </Button>
@@ -254,6 +254,7 @@ const ProductsTable: React.FC = () => {
             variant="outline"
             onClick={() => setPage(page + 1)}
             disabled={!data?.products?.length || data.products.length < limit}
+            className="flex-1 sm:flex-none"
           >
             Next
           </Button>
